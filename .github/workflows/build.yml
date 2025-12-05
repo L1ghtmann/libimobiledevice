@@ -89,6 +89,7 @@ jobs:
       env:
         github_token: ${{secrets.GITHUB_TOKEN}}
       run: |
-        TAG="${GITHUB_REF##*/}-${GITHUB_SHA:0:7}"
+        DATE="$(date +'%m%d%Y')"
+        TAG="${GITHUB_REF##*/}-$DATE"
         gh release create "$TAG" --draft --title "Draft Release"
         gh release upload "$TAG" libimobile-suite-latest_${{ matrix.arch }}-${{ matrix.msystem }}.tar.xz
