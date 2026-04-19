@@ -57,35 +57,23 @@ jobs:
     - name: prepare release
       run: |
         mkdir -p rel
-        find /mingw64/bin/ -type f \( -name "*idevice*" -o \
-                                      -name "*irecovery*" -o \
-                                      -name "libimobiledevice*" -o \
-                                      -name "libplist*" -o \
-                                      -name "plistutil.exe" -o \
-                                      -name "libusbmuxd*" -o \
-                                      -name "inetcat.exe" -o \
-                                      -name "iproxy.exe" -o \
-                                      -name "libcurl*.dll" -o \
-                                      -name "libtatsu*.dll" -o \
-                                      -name "libxml2*.dll" -o \
-                                      -name "libzip*.dll" -o \
-                                      -name "zlib*.dll" -o \
-                                      -name "libreadline*.dll" -o \
-                                      -name "libbrotli*.dll" -o \
-                                      -name "libiconv*.dll" -o \
-                                      -name "libunistring*.dll" -o \
-                                      -name "libssh*.dll" -o \
-                                      -name "libintl*.dll" -o \
-                                      -name "libidn*.dll" -o \
-                                      -name "libnghttp*.dll" -o \
-                                      -name "libpsl*.dll" -o \
-                                      -name "libbz2*.dll" -o \
-                                      -name "liblzma*.dll" -o \
-                                      -name "libzstd*.dll" -o \
-                                      -name "libtermcap*.dll" -o \
-                                      -name "libcrypto*.dll" -o \
-                                      -name "libssl*.dll" \) \
-                                      -exec cp -v {} rel \;
+        # Copy binaries first
+        find /mingw64/bin/ -type f \( -name "*idevice*" -o -name "*irecovery*" -o \
+                                      -name "plistutil.exe" -o -name "inetcat.exe" -o \
+                                      -name "iproxy.exe" \) -exec cp -v {} rel \;
+        # Resolve all DLL deps recursively from /mingw64
+        resolve_deps() {
+          ldd "$1" 2>/dev/null | awk '/\/mingw64\/bin\// {print $3}' | while read dll; do
+            base=$(basename "$dll")
+            if [ ! -f "rel/$base" ]; then
+              cp -v "$dll" rel/
+              resolve_deps "$dll"
+            fi
+          done
+        }
+        for exe in rel/*.exe; do
+          resolve_deps "$exe"
+        done
         tar -C rel -cJvf libimobile-suite-latest_${{ matrix.arch }}-${{ matrix.msystem }}.tar.xz .
 
     - name: publish release
