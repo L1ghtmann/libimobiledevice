@@ -31,7 +31,7 @@ jobs:
           automake-wrapper
           mingw-w64-${{ matrix.arch }}-pkgconf
           mingw-w64-${{ matrix.arch }}-libzip
-          mingw-w64-${{ matrix.arch }}-libxml
+          mingw-w64-${{ matrix.arch }}-libxml2
           mingw-w64-${{ matrix.arch }}-curl
           mingw-w64-${{ matrix.arch }}-github-cli
 
