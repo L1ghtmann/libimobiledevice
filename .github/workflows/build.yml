@@ -23,6 +23,7 @@ jobs:
         update: false
         install: >-
           base-devel
+          libcurl
           git
           mingw-w64-${{ matrix.arch }}-gcc
           make
