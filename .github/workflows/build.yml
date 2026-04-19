@@ -23,7 +23,6 @@ jobs:
         update: false
         install: >-
           base-devel
-          libcurl
           git
           mingw-w64-${{ matrix.arch }}-gcc
           make
@@ -32,6 +31,7 @@ jobs:
           automake-wrapper
           mingw-w64-${{ matrix.arch }}-pkgconf
           mingw-w64-${{ matrix.arch }}-libzip
+          mingw-w64-${{ matrix.arch }}-libcurl
           mingw-w64-${{ matrix.arch }}-github-cli
 
     - uses: actions/checkout@v4
